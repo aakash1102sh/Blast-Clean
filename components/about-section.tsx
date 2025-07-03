@@ -30,7 +30,7 @@ export function AboutSection() {
           </div>
           <div className="aspect-square bg-muted rounded-lg">
             <img
-              src="/placeholder.svg?height=400&width=400"
+              src="/banner-1.png"
               alt="About BlastClean"
               className="w-full h-full object-cover rounded-lg"
             />
