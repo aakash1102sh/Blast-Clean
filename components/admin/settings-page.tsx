@@ -1,27 +1,21 @@
-import { Input } from "../ui/input";
-import { useState, useEffect } from "react";
-import { Button } from "react-day-picker";
-import { Label } from "../ui/label";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../ui/card";
-import { Textarea } from "../ui/textarea";
+"use client"
 
-export function SettingsPage({
-  dbStatus,
-  loading,
-  showNotification,
-  checkDatabaseStatus,
-  initializeDatabase,
-}: {
-  dbStatus: {
-    connected: boolean
-    stats?: { products: number; orders: number; customers: number }
-    error?: string
-  } | null
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import type { DatabaseStatus } from "@/lib/types"
+
+interface SettingsPageProps {
+  dbStatus: DatabaseStatus | null
   loading: boolean
   showNotification: (type: "success" | "error", message: string) => void
   checkDatabaseStatus: () => Promise<void>
-  initializeDatabase: () => Promise<void>
-}) {
+}
+
+export function SettingsPage({ dbStatus, loading, showNotification, checkDatabaseStatus }: SettingsPageProps) {
   const [businessSettings, setBusinessSettings] = useState({
     whatsappNumber: "",
     businessEmail: "",
@@ -31,7 +25,6 @@ export function SettingsPage({
   })
 
   useEffect(() => {
-    // Load saved settings from localStorage
     const savedSettings = localStorage.getItem("businessSettings")
     if (savedSettings) {
       setBusinessSettings(JSON.parse(savedSettings))
@@ -43,13 +36,27 @@ export function SettingsPage({
     showNotification("success", "Business settings saved successfully!")
   }
 
+  const initializeDatabase = async () => {
+    try {
+      const response = await fetch("/api/db/init")
+      const result = await response.json()
+      if (result.success) {
+        showNotification("success", "Database initialized successfully!")
+        await checkDatabaseStatus()
+      } else {
+        throw new Error(result.error || "Failed to initialize database")
+      }
+    } catch (error) {
+      console.error("Database initialization error:", error)
+      showNotification("error", error instanceof Error ? error.message : "Failed to initialize database")
+    }
+  }
+
   const exportData = async () => {
     try {
       const response = await fetch("/api/db/export")
       const data = await response.json()
-
       if (response.ok) {
-        // Create and download JSON file
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })
         const url = URL.createObjectURL(blob)
         const a = document.createElement("a")
@@ -59,7 +66,6 @@ export function SettingsPage({
         a.click()
         document.body.removeChild(a)
         URL.revokeObjectURL(url)
-
         showNotification("success", "Data exported successfully!")
       } else {
         throw new Error(data.error || "Failed to export data")
@@ -77,13 +83,11 @@ export function SettingsPage({
       )
     )
       return
-
     if (!confirm("This is your final warning. ALL DATA WILL BE PERMANENTLY DELETED. Continue?")) return
 
     try {
       const response = await fetch("/api/db/clear", { method: "POST" })
       const result = await response.json()
-
       if (response.ok && result.success) {
         showNotification("success", "All data cleared successfully!")
         await checkDatabaseStatus()
@@ -116,7 +120,7 @@ export function SettingsPage({
                 </div>
 
                 {dbStatus.connected && dbStatus.stats && (
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="text-center p-4 bg-muted rounded-lg">
                       <div className="text-2xl font-bold text-primary">{dbStatus.stats.products}</div>
                       <div className="text-sm text-muted-foreground">Products</div>
@@ -145,11 +149,16 @@ export function SettingsPage({
               </div>
             )}
 
-            <div className="flex space-x-2">
-              <Button onClick={checkDatabaseStatus} disabled={loading}>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button
+                onClick={checkDatabaseStatus}
+                variant="outline"
+                disabled={loading}
+                className="flex-1 bg-transparent"
+              >
                 Refresh Status
               </Button>
-              <Button onClick={initializeDatabase} className="bg-primary hover:bg-primary/90" disabled={loading}>
+              <Button onClick={initializeDatabase} className="bg-primary hover:bg-primary/90 flex-1" disabled={loading}>
                 Initialize Database
               </Button>
             </div>
@@ -165,13 +174,13 @@ export function SettingsPage({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="companyName">Company Name</Label>
                 <Input
                   id="companyName"
                   value={businessSettings.companyName}
-                  onChange={(e: { target: { value: any; }; }) => setBusinessSettings((prev) => ({ ...prev, companyName: e.target.value }))}
+                  onChange={(e) => setBusinessSettings((prev) => ({ ...prev, companyName: e.target.value }))}
                   placeholder="BlastClean"
                 />
               </div>
@@ -180,19 +189,19 @@ export function SettingsPage({
                 <Input
                   id="website"
                   value={businessSettings.website}
-                  onChange={(e: { target: { value: any; }; }) => setBusinessSettings((prev) => ({ ...prev, website: e.target.value }))}
+                  onChange={(e) => setBusinessSettings((prev) => ({ ...prev, website: e.target.value }))}
                   placeholder="https://blastclean.com"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
                 <Input
                   id="whatsappNumber"
                   value={businessSettings.whatsappNumber}
-                  onChange={(e: { target: { value: any; }; }) => setBusinessSettings((prev) => ({ ...prev, whatsappNumber: e.target.value }))}
+                  onChange={(e) => setBusinessSettings((prev) => ({ ...prev, whatsappNumber: e.target.value }))}
                 />
                 <p className="text-sm text-muted-foreground mt-1">
                   This number will be used for WhatsApp contact integration
@@ -204,7 +213,7 @@ export function SettingsPage({
                   id="businessEmail"
                   type="email"
                   value={businessSettings.businessEmail}
-                  onChange={(e: { target: { value: any; }; }) => setBusinessSettings((prev) => ({ ...prev, businessEmail: e.target.value }))}
+                  onChange={(e) => setBusinessSettings((prev) => ({ ...prev, businessEmail: e.target.value }))}
                   placeholder="info@blastclean.com"
                 />
               </div>
@@ -221,7 +230,7 @@ export function SettingsPage({
               />
             </div>
 
-            <Button onClick={saveBusinessSettings} className="bg-primary hover:bg-primary/90">
+            <Button onClick={saveBusinessSettings} className="w-full sm:w-auto bg-primary hover:bg-primary/90">
               Save Business Settings
             </Button>
           </div>
@@ -235,30 +244,29 @@ export function SettingsPage({
           <CardDescription>Export, import, and manage your application data</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-medium mb-2">Export Data</h4>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Download all your data as a JSON file for backup or migration purposes.
-                </p>
-                <Button onClick={exportData} className="w-full bg-transparent">
-                  Export All Data
-                </Button>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-4 border rounded-lg">
+              <h4 className="font-medium mb-2">Export Data</h4>
+              <p className="text-sm text-muted-foreground mb-3">
+                Download all your data as a JSON file for backup or migration purposes.
+              </p>
+              <Button onClick={exportData} variant="outline" className="w-full bg-transparent">
+                Export All Data
+              </Button>
+            </div>
 
-              <div className="p-4 border rounded-lg border-red-200">
-                <h4 className="font-medium mb-2 text-red-700">Clear All Data</h4>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Permanently delete all products, orders, and customers. This action cannot be undone.
-                </p>
-                <Button
-                  onClick={clearAllData}
-                  className="w-full text-red-600 hover:bg-red-50 bg-transparent"
-                >
-                  Clear All Data
-                </Button>
-              </div>
+            <div className="p-4 border rounded-lg border-red-200">
+              <h4 className="font-medium mb-2 text-red-700">Clear All Data</h4>
+              <p className="text-sm text-muted-foreground mb-3">
+                Permanently delete all products, orders, and customers. This action cannot be undone.
+              </p>
+              <Button
+                onClick={clearAllData}
+                variant="outline"
+                className="w-full text-red-600 hover:bg-red-50 bg-transparent"
+              >
+                Clear All Data
+              </Button>
             </div>
           </div>
         </CardContent>
