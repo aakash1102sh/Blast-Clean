@@ -97,7 +97,7 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
               <div className="flex justify-center lg:justify-start pt-2">
                 <Button
                   size="lg"
-                  className="bg-blue-700 text-white hover:bg-blue-800 px-8 py-4 rounded-full transition-all duration-300 ease-in-out hover:scale-105 shadow-lg"
+                  className="gradient-primary backdrop-blur supports-[backdrop-filter]:bg-background/60 px-8 py-4 rounded-full transition-all duration-300 ease-in-out hover:scale-105 shadow-lg"
                   onClick={handleScrollToProducts}
                   type="button"
                 >
