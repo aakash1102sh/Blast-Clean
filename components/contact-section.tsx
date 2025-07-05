@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,8 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { MessageCircle, Phone, Mail, MapPin, Award, Plus, Minus } from "lucide-react"
-import type { Product } from "@/lib/models"
+import { MessageCircle, Phone, Mail, MapPin, Award, Plus, Minus, ExternalLink, Navigation } from "lucide-react"
+import type { Product } from "@/lib/types"
 
 interface ContactFormData {
   name: string
@@ -120,7 +119,7 @@ export function ContactSection({ products }: ContactSectionProps) {
     setIsSubmitting(true)
 
     try {
-      const whatsappNumber = "+1234567890" // Replace with actual admin WhatsApp number
+      const whatsappNumber = "8002938263" // Replace with actual admin WhatsApp number
       const message = generateWhatsAppMessage()
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`
 
@@ -148,14 +147,18 @@ export function ContactSection({ products }: ContactSectionProps) {
   }
 
   const openWhatsApp = () => {
-    const phoneNumber = "+918002938263" // Replace with actual admin WhatsApp number
+    const phoneNumber = "+918002938263"
     const message = "Hello! I would like to inquire about your products."
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank")
   }
 
+  const openGoogleMaps = () => {
+    window.open("https://maps.app.goo.gl/rfZYkdiioDkW72ZL6?g_st=ipcAttachment", "_blank")
+  }
+
   return (
     <section id="contact" className="py-20">
-      <div className="container">
+      <div className="container px-4">
         <div className="text-center space-y-4 mb-12">
           <h2 className="text-3xl md:text-4xl font-bold">Get in Touch</h2>
           <p className="text-xl text-muted-foreground">Ready to elevate your cleaning standards? Contact us today!</p>
@@ -192,40 +195,87 @@ export function ContactSection({ products }: ContactSectionProps) {
               </div>
             </div>
 
-            {/* Location Section */}
+            {/* Location Section with Interactive Map */}
             <Card className="border-primary/20">
               <CardHeader>
                 <CardTitle className="text-primary flex items-center">
                   <MapPin className="h-5 w-5 mr-2" />
                   Our Location
                 </CardTitle>
-                <CardDescription>Visit us at our main office</CardDescription>
+                <CardDescription>Visit us at our main office in Jamshedpur</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="aspect-video bg-muted rounded-lg overflow-hidden">
-                    {/* Placeholder for map - replace with actual map integration */}
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-                      <div className="text-center">
-                        <MapPin className="h-12 w-12 text-primary mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">Interactive Map</p>
-                        <p className="text-xs text-muted-foreground">Road No - 31, Adityapur-2</p>
-                      </div>
+                  {/* Interactive Google Maps Embed */}
+                  <div className="aspect-video bg-muted rounded-lg overflow-hidden relative group">
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3677.8234567890123!2d86.18456789012345!3d22.78901234567890!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f5e31ed6d4c5d7%3A0x8b2c3d4e5f6a7b8c!2sRoad%20No%20-%2031%2C%20Adityapur-2%2C%20Jamshedpur%2C%20Jharkhand%20831013!5e0!3m2!1sen!2sin!4v1234567890123!5m2!1sen!2sin"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      className="rounded-lg"
+                      title="BlastClean Office Location"
+                    />
+
+                    {/* Overlay with Get Directions Button */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <Button
+                        onClick={openGoogleMaps}
+                        className="bg-primary hover:bg-primary/90 text-white shadow-lg"
+                        size="sm"
+                      >
+                        <Navigation className="mr-2 h-4 w-4" />
+                        Get Directions
+                      </Button>
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    <p className="font-medium">Business Hours:</p>
-                    <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
-                    <p>Saturday: 9:00 AM - 4:00 PM</p>
-                    <p>Sunday: Closed</p>
+
+                  {/* Location Details and Actions */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Button
+                        onClick={openGoogleMaps}
+                        variant="outline"
+                        size="sm"
+                        className="text-white gradient-primary backdrop-blur supports-[backdrop-filter]:bg-background/60"
+                      >
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        Open in Maps
+                      </Button>
+                    </div>
+
+                    <div className="text-sm text-muted-foreground bg-gray-50 p-4 rounded-lg">
+                      <p className="font-medium text-gray-900 mb-2">Business Hours:</p>
+                      <div className="space-y-1">
+                        <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
+                        <p>Saturday: 9:00 AM - 4:00 PM</p>
+                        <p>Sunday: Closed</p>
+                      </div>
+                    </div>
+
+                    {/* Quick Contact Actions */}
+                    <div className="grid grid-cols-2 gap-3">
+                      
+                      <Button
+                        onClick={() => window.open("tel:+918002938263")}
+                        variant="outline"
+                        size="sm"
+                        className=" text-white gradient-primary backdrop-blur supports-[backdrop-filter]:bg-background/60"
+                      >
+                        <Phone className="mr-2 h-4 w-4" />
+                        Call Now
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-
-            
           </div>
 
+          {/* Contact Form */}
           <Card>
             <CardHeader>
               <CardTitle>Business Inquiry Form</CardTitle>
@@ -258,7 +308,7 @@ export function ContactSection({ products }: ContactSectionProps) {
                         value={contactForm.phone}
                         onChange={(e) => setContactForm((prev) => ({ ...prev, phone: e.target.value }))}
                         required
-                        placeholder="+1 (555) 123-4567"
+                        placeholder="+91 9876543210"
                       />
                     </div>
                   </div>
