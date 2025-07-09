@@ -11,6 +11,7 @@ import { ProductsSection } from "@/components/products-section"
 import { AboutSection } from "@/components/about-section"
 import { ContactSection } from "@/components/contact-section"
 import { Footer } from "@/components/footer"
+import { BestForSection } from "@/components/best-for-section"
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -50,8 +51,9 @@ export default function HomePage() {
       <Header scrollToSection={scrollToSection} />
       <HeroSection scrollToSection={scrollToSection} />
       <FeaturesSection />
-      <ProductsSection products={products} />
       <AboutSection />
+      <BestForSection scrollToSection={scrollToSection} />
+      <ProductsSection products={products} />
       <ContactSection products={products} />
       <Footer />
     </div>
