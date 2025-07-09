@@ -19,7 +19,7 @@ export default function AdminLogin() {
     e.preventDefault()
 
     // Simple authentication (in production, use proper authentication)
-    if (credentials.username === "admin" && credentials.password === "admin123") {
+    if (credentials.username === "aakash" && credentials.password === "aakash1102") {
       localStorage.setItem("adminLoggedIn", "true")
       router.push("/admin/dashboard")
     } else {
