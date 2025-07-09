@@ -40,7 +40,7 @@ export function AboutSection() {
               </div>
               <div className="text-center lg:text-left">
                 <div className="text-2xl sm:text-3xl font-bold text-primary">1000+</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Stock Available</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Stocks Available</div>
               </div>
             </div>
           </div>
