@@ -119,12 +119,12 @@ export function ContactSection({ products }: ContactSectionProps) {
     setIsSubmitting(true)
 
     try {
-      const whatsappNumber = "8002938263" // Replace with actual admin WhatsApp number
+      const whatsappNumber = "918002938263" // Updated: removed the + sign for direct WhatsApp redirect
       const message = generateWhatsAppMessage()
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`
 
-      // Open WhatsApp
-      window.open(whatsappUrl, "_blank")
+      // Direct redirect to WhatsApp
+      window.location.href = whatsappUrl
 
       // Reset form after successful submission
       setContactForm({
@@ -137,7 +137,9 @@ export function ContactSection({ products }: ContactSectionProps) {
       })
 
       // Show success message
-      alert("Redirecting to WhatsApp! Your inquiry has been prepared.")
+      setTimeout(() => {
+        alert("Redirecting to WhatsApp! Your inquiry has been prepared.")
+      }, 100)
     } catch (error) {
       console.error("Error generating WhatsApp message:", error)
       alert("Failed to generate WhatsApp message. Please try again.")
@@ -147,9 +149,10 @@ export function ContactSection({ products }: ContactSectionProps) {
   }
 
   const openWhatsApp = () => {
-    const phoneNumber = "+918002938263"
+    const phoneNumber = "918002938263" // Updated: removed the + sign for direct WhatsApp redirect
     const message = "Hello! I would like to inquire about your products."
-    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank")
+    // Direct redirect to WhatsApp
+    window.location.href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
   }
 
   const openGoogleMaps = () => {
@@ -240,7 +243,7 @@ export function ContactSection({ products }: ContactSectionProps) {
                         onClick={openGoogleMaps}
                         variant="outline"
                         size="sm"
-                        className="text-white gradient-primary backdrop-blur supports-[backdrop-filter]:bg-background/60"
+                        className="text-white gradient-primary backdrop-blur supports-[backdrop-filter]:bg-background/60 bg-transparent"
                       >
                         <ExternalLink className="mr-2 h-4 w-4" />
                         Open in Maps
@@ -263,7 +266,7 @@ export function ContactSection({ products }: ContactSectionProps) {
                         onClick={() => window.open("tel:+918002938263")}
                         variant="outline"
                         size="sm"
-                        className=" text-white gradient-primary backdrop-blur supports-[backdrop-filter]:bg-background/60"
+                        className="text-white gradient-primary backdrop-blur supports-[backdrop-filter]:bg-background/60"
                       >
                         <Phone className="mr-2 h-4 w-4" />
                         Call Now
